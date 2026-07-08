@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>أكاديمية السمان</title>
+
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<link
+rel="stylesheet"
+href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="loginCard">
+
+        <img
+        src="logo.png"
+        class="logo">
+
+        <h1>
+
+            أكاديمية السمان
+
+        </h1>
+
+        <p class="subtitle">
+
+            منصة الفيديوهات التعليمية
+
+        </p>
+
+        <input
+
+        id="codeInput"
+
+        type="text"
+
+        placeholder="كود الطالب">
+
+        <input
+
+        id="passwordInput"
+
+        type="password"
+
+        placeholder="الرقم السرى">
+
+        <button id="loginBtn">
+
+            <i class="fa-solid fa-right-to-bracket"></i>
+
+            دخول المنصة
+
+        </button>
+
+        <div id="loginError"></div>
+
+    </div>
+<!--==================================
+        بيانات الطالب
+===================================-->
+
+<div
+id="studentCard"
+class="result-card hidden">
+
+    <h2 class="result-title">
+
+        <i class="fa-solid fa-user-graduate"></i>
+
+        بيانات الطالب
+
+    </h2>
+
+    <div class="result-row">
+
+        <span class="result-label">
+
+            الاسم
+
+        </span>
+
+        <span
+        id="studentName"
+        class="result-value">
+
+        </span>
+
+    </div>
+
+    <div class="result-row">
+
+        <span class="result-label">
+
+            الصف الدراسى
+
+        </span>
+
+        <span
+        id="studentGrade"
+        class="result-value">
+
+        </span>
+
+    </div>
+
+    <button
+    id="logoutBtn"
+    class="logout-btn">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        تسجيل الخروج
+
+    </button>
+
+</div>
+
+<!--==================================
+        الفيديوهات
+===================================-->
+
+<div
+id="videosCard"
+class="result-card hidden">
+
+    <h2 class="result-title">
+
+        <i class="fa-solid fa-video"></i>
+
+        مكتبة الفيديوهات
+
+    </h2>
+
+    <div
+    id="videosContainer">
+
+    </div>
+
+</div>
+
+<!--==================================
+        مشغل الفيديو
+===================================-->
+
+<div
+id="playerCard"
+class="result-card hidden">
+
+    <h2
+    id="videoTitle"
+    class="result-title">
+
+    </h2>
+
+    <div class="video-wrapper">
+
+        <iframe
+
+        id="videoFrame"
+
+        src=""
+
+        allowfullscreen
+
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+
+        referrerpolicy="strict-origin-when-cross-origin">
+
+        </iframe>
+
+    </div>
+
+    <div class="player-buttons">
+
+        <button
+        id="prevBtn">
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+            السابق
+
+        </button>
+
+        <button
+        id="nextBtn">
+
+            التالى
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+        </button>
+
+    </div>
+
+    <button
+    id="backBtn"
+    class="back-btn">
+
+        <i class="fa-solid fa-list"></i>
+
+        الرجوع لقائمة الدروس
+
+    </button>
+
+</div>
+<!--==================================
+        رسالة الخطأ
+===================================-->
+
+<div
+id="errorCard"
+class="result-card hidden">
+
+    <div class="not-found">
+
+        <i class="fa-solid fa-circle-xmark"></i>
+
+        <h2>
+
+            لا توجد بيانات أو حدث خطأ
+
+        </h2>
+
+    </div>
+
+</div>
+
+
+<!--==================================
+        Footer
+===================================-->
+
+<footer class="footer">
+
+    <h3>
+
+        أكاديمية السمان
+
+    </h3>
+
+
+    <p>
+
+        منصة الفيديوهات التعليمية
+
+    </p>
+
+
+    <a
+
+    href="https://www.facebook.com/profile.php?id=100093795507056"
+
+    target="_blank"
+
+    class="facebook-btn">
+
+        <i class="fa-brands fa-facebook-f"></i>
+
+        صفحة الأكاديمية
+
+    </a>
+
+
+    <p class="copyright">
+
+        © جميع الحقوق محفوظة
+
+    </p>
+
+
+</footer>
+
+
+</div>
+
+
+<!--==================================
+        JavaScript
+===================================-->
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>

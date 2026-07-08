@@ -1,0 +1,636 @@
+/*=========================================
+        Google Font
+=========================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+
+/*=========================================
+        Reset
+=========================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:'Cairo',sans-serif;
+    direction:rtl;
+    background:#eef3fb;
+    color:#222;
+    min-height:100vh;
+
+}
+
+/*=========================================
+        Container
+=========================================*/
+
+.container{
+
+    width:95%;
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+
+}
+
+/*=========================================
+        Logo
+=========================================*/
+
+.logo{
+
+    width:120px;
+    height:120px;
+    display:block;
+    margin:20px auto;
+    border-radius:50%;
+    object-fit:cover;
+
+}
+
+/*=========================================
+        Login Card
+=========================================*/
+
+.loginCard{
+
+    background:#fff;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    margin-bottom:30px;
+    text-align:center;
+
+}
+
+.loginCard h1{
+
+    color:#0d47a1;
+    font-size:34px;
+    font-weight:800;
+
+}
+
+.subtitle{
+
+    color:#666;
+    font-size:20px;
+    margin-top:10px;
+    margin-bottom:30px;
+
+}
+
+/*=========================================
+        Inputs
+=========================================*/
+
+.loginCard input{
+
+    width:100%;
+    height:58px;
+    border:2px solid #ddd;
+    border-radius:15px;
+    padding:0 15px;
+    margin-bottom:18px;
+    font-size:20px;
+    transition:.30s;
+
+}
+
+.loginCard input:focus{
+
+    outline:none;
+    border-color:#0d47a1;
+    box-shadow:0 0 10px rgba(13,71,161,.15);
+
+}
+
+.loginCard input::placeholder{
+
+    color:#999;
+
+}
+
+/*=========================================
+        Login Button
+=========================================*/
+
+#loginBtn{
+
+    width:100%;
+    height:58px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#0d47a1,#1976d2);
+    color:#fff;
+    font-size:22px;
+    font-weight:bold;
+    transition:.30s;
+
+}
+
+#loginBtn:hover{
+
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.20);
+
+}
+
+#loginBtn:disabled{
+
+    opacity:.7;
+    cursor:not-allowed;
+
+}
+
+/*=========================================
+        Hidden
+=========================================*/
+
+.hidden{
+
+    display:none;
+
+}
+/*=========================================
+        Cards
+=========================================*/
+
+.result-card{
+
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.10);
+
+}
+
+.result-title{
+
+    text-align:center;
+    color:#0d47a1;
+    font-size:30px;
+    font-weight:800;
+    margin-bottom:25px;
+
+}
+
+.result-row{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px;
+    border-bottom:1px solid #ececec;
+
+}
+
+.result-label{
+
+    font-size:20px;
+    font-weight:700;
+    color:#555;
+
+}
+
+.result-value{
+
+    font-size:20px;
+    font-weight:800;
+    color:#111;
+
+}
+
+/*=========================================
+        Logout Button
+=========================================*/
+
+.logout-btn{
+
+    width:100%;
+    height:55px;
+    border:none;
+    border-radius:15px;
+    margin-top:25px;
+    background:linear-gradient(135deg,#d32f2f,#c62828);
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.30s;
+
+}
+
+.logout-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/*=========================================
+        Video Units
+=========================================*/
+
+.video-unit{
+
+    margin-top:30px;
+
+}
+
+.video-unit-title{
+
+    background:linear-gradient(135deg,#0d47a1,#1976d2);
+    color:#fff;
+    padding:15px 20px;
+    border-radius:15px;
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:20px;
+
+}
+
+/*=========================================
+        Video Card
+=========================================*/
+
+.video-card{
+
+    background:#fff;
+    border-right:6px solid #0d47a1;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    cursor:pointer;
+    transition:.30s;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.video-card:hover{
+
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(0,0,0,.18);
+
+}
+
+.video-card.active{
+
+    border-right:8px solid #43a047;
+    background:#f4fff4;
+
+}
+
+.video-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.video-icon{
+
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#e3f2fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0d47a1;
+    font-size:28px;
+
+}
+
+.lesson-number{
+
+    color:#1976d2;
+    font-size:18px;
+    font-weight:700;
+
+}
+
+.lesson-name{
+
+    margin-top:10px;
+    font-size:24px;
+    font-weight:800;
+    color:#222;
+
+}
+
+/*=========================================
+        Watch Button
+=========================================*/
+
+.watch-btn{
+
+    width:100%;
+    height:55px;
+    margin-top:18px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#2e7d32,#43a047);
+    color:#fff;
+    font-size:20px;
+    font-weight:bold;
+    transition:.30s;
+
+}
+
+.watch-btn:hover{
+
+    background:linear-gradient(135deg,#1b5e20,#2e7d32);
+
+}
+/*=========================================
+        Video Player
+=========================================*/
+
+.video-wrapper{
+
+    width:100%;
+    position:relative;
+    padding-top:56.25%;
+    overflow:hidden;
+    border-radius:20px;
+    background:#000;
+
+}
+
+
+.video-wrapper iframe{
+
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border:none;
+
+}
+
+
+/*=========================================
+        Player Buttons
+=========================================*/
+
+.player-buttons{
+
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    margin-top:25px;
+
+}
+
+
+.player-buttons button,
+.back-btn{
+
+    flex:1;
+    height:55px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:19px;
+    font-weight:bold;
+    transition:.3s;
+
+}
+
+
+#prevBtn{
+
+    background:#eeeeee;
+    color:#333;
+
+}
+
+
+#nextBtn{
+
+    background:#0d47a1;
+    color:#fff;
+
+}
+
+
+.player-buttons button:hover,
+.back-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+
+.back-btn{
+
+    width:100%;
+    margin-top:20px;
+    background:#6a1b9a;
+    color:white;
+
+}
+
+
+/*=========================================
+        Loading
+=========================================*/
+
+.loading{
+
+    text-align:center;
+    padding:40px;
+    color:#0d47a1;
+    font-size:22px;
+    font-weight:bold;
+
+}
+
+
+.loading i{
+
+    animation:rotate 1s linear infinite;
+
+}
+
+
+@keyframes rotate{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+
+/*=========================================
+        Error Message
+=========================================*/
+
+.not-found{
+
+    text-align:center;
+    padding:40px;
+
+}
+
+
+.not-found i{
+
+    font-size:70px;
+    color:#d32f2f;
+
+}
+
+
+.not-found h2{
+
+    margin-top:20px;
+    color:#555;
+
+}
+
+
+/*=========================================
+        Footer
+=========================================*/
+
+.footer{
+
+    text-align:center;
+    padding:30px;
+    margin-top:40px;
+    background:#0d47a1;
+    color:#fff;
+    border-radius:20px;
+
+}
+
+
+.footer h3{
+
+    font-size:28px;
+
+}
+
+
+.footer p{
+
+    margin:10px;
+
+}
+
+
+.facebook-btn{
+
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 25px;
+    border-radius:30px;
+    background:#fff;
+    color:#0d47a1;
+    text-decoration:none;
+    font-weight:bold;
+
+}
+
+
+.copyright{
+
+    opacity:.8;
+
+}
+
+
+/*=========================================
+        Responsive Mobile
+=========================================*/
+
+@media(max-width:600px){
+
+
+    .container{
+
+        width:100%;
+        padding:10px;
+
+    }
+
+
+    .loginCard,
+    .result-card{
+
+        padding:20px;
+
+    }
+
+
+    .loginCard h1{
+
+        font-size:26px;
+
+    }
+
+
+    .subtitle{
+
+        font-size:17px;
+
+    }
+
+
+    .result-row{
+
+        flex-direction:column;
+        gap:8px;
+        text-align:center;
+
+    }
+
+
+    .result-title{
+
+        font-size:24px;
+
+    }
+
+
+    .lesson-name{
+
+        font-size:20px;
+
+    }
+
+
+    .player-buttons{
+
+        flex-direction:column;
+
+    }
+
+
+}
