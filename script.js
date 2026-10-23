@@ -1,4 +1,43 @@
 ﻿//=========================================
+// شريط التحميل بالنسبة المئوية عند الدخول
+//=========================================
+(function initLoader() {
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const loaderOverlay = document.getElementById("loaderOverlay");
+
+    // محاكاة زيادة التحميل حتى 90% أثناء تحميل الصفحة
+    const interval = setInterval(() => {
+        if (progress < 90) {
+            progress += Math.floor(Math.random() * 8) + 2;
+            if (progress > 90) progress = 90;
+            if (progressBar && progressText) {
+                progressBar.style.width = progress + "%";
+                progressText.textContent = progress + "%";
+            }
+        }
+    }, 100);
+
+    // عند اكتمال تحميل جميع عناصر الصفحة والمحتوى
+    window.addEventListener("load", function () {
+        clearInterval(interval);
+        progress = 100;
+        if (progressBar && progressText) {
+            progressBar.style.width = "100%";
+            progressText.textContent = "100%";
+        }
+        
+        // إخفاء الشاشة بسلاسة بعد اكتمال التحميل
+        setTimeout(() => {
+            if (loaderOverlay) {
+                loaderOverlay.classList.add("fade-out");
+            }
+        }, 400);
+    });
+})();
+
+//=========================================
 // Google Apps Script API
 //=========================================
 
