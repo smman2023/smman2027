@@ -1,35 +1,30 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+<title>
+أكاديمية مستر السمان | منصة الفيديوهات
+</title>
 
-<title>أكاديمية السمان</title>
+<meta name="theme-color" content="#0d47a1">
 
-<link
-rel="preconnect"
-href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-<link
-rel="preconnect"
+<link rel="preconnect"
 href="https://fonts.gstatic.com"
 crossorigin>
 
-<link
-href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
 rel="stylesheet">
 
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-<link
-rel="stylesheet"
+<link rel="stylesheet"
 href="style.css">
 
 </head>
@@ -38,206 +33,238 @@ href="style.css">
 
 <div class="container">
 
-    <div class="loginCard">
+<!--=========================
+        Logo
+==========================-->
 
-        <img
-        src="logo.png"
-        class="logo">
+<img
+src="logo.png"
+class="logo"
+alt="Academy Logo">
 
-        <h1>
+<h1 class="main-title">
 
-            أكاديمية السمان
+أكاديمية مستر السمان
 
-        </h1>
+</h1>
 
-        <p class="subtitle">
+<p class="sub-title">
 
-            منصة الفيديوهات التعليمية
+منصة الفيديوهات التعليمية
 
-        </p>
+</p>
 
-        <input
+<div class="title-line"></div>
 
-        id="codeInput"
+<!--=========================
+        Banner
+==========================-->
 
-        type="text"
+<div class="banner">
 
-        placeholder="كود الطالب">
+<img
+src="banner.png"
+alt="Banner">
 
-        <input
+</div>
 
-        id="passwordInput"
+<!--=========================
+        Login
+==========================-->
 
-        type="password"
+<div class="search-box">
 
-        placeholder="الرقم السرى">
+<input
+type="text"
+id="codeInput"
+placeholder="كود الطالب"
+autocomplete="off">
 
-        <button id="loginBtn">
+<input
+type="tel"
+id="passwordInput"
+placeholder="رقم واتساب الطالب أو ولي الأمر"
+autocomplete="off">
 
-            <i class="fa-solid fa-right-to-bracket"></i>
+<button
+id="loginBtn"
+class="search-btn">
 
-            دخول المنصة
+<i class="fa-solid fa-right-to-bracket"></i>
 
-        </button>
+دخول المنصة
 
-        <div id="loginError"></div>
+</button>
 
-    </div>
-<!--==================================
-        بيانات الطالب
-===================================-->
+</div>
+
+<!--=========================
+      Student Card
+==========================-->
 
 <div
 id="studentCard"
 class="result-card hidden">
 
-    <h2 class="result-title">
+<h2 class="result-title">
 
-        <i class="fa-solid fa-user-graduate"></i>
+<i class="fa-solid fa-user-graduate"></i>
 
-        بيانات الطالب
+بيانات الطالب
 
-    </h2>
+</h2>
 
-    <div class="result-row">
+<div class="result-row">
 
-        <span class="result-label">
+<span class="result-label">
 
-            الاسم
+<i class="fa-solid fa-user"></i>
 
-        </span>
+الاسم
 
-        <span
-        id="studentName"
-        class="result-value">
+</span>
 
-        </span>
-
-    </div>
-
-    <div class="result-row">
-
-        <span class="result-label">
-
-            الصف الدراسى
-
-        </span>
-
-        <span
-        id="studentGrade"
-        class="result-value">
-
-        </span>
-
-    </div>
-
-    <button
-    id="logoutBtn"
-    class="logout-btn">
-
-        <i class="fa-solid fa-right-from-bracket"></i>
-
-        تسجيل الخروج
-
-    </button>
+<span
+id="studentName"
+class="result-value"></span>
 
 </div>
 
-<!--==================================
-        الفيديوهات
-===================================-->
+<div class="result-row">
+
+<span class="result-label">
+
+<i class="fa-solid fa-school"></i>
+
+الصف
+
+</span>
+
+<span
+id="studentGrade"
+class="result-value"></span>
+
+</div>
+
+<div class="attendance-btn-box">
+
+<button
+id="logoutBtn"
+class="attendance-btn">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+تسجيل الخروج
+
+</button>
+
+</div>
+
+</div>
+
+<!--=========================
+      Videos Card
+==========================-->
 
 <div
 id="videosCard"
 class="result-card hidden">
 
-    <h2 class="result-title">
+<h2 class="result-title">
 
-        <i class="fa-solid fa-video"></i>
+<i class="fa-solid fa-circle-play"></i>
 
-        مكتبة الفيديوهات
+مكتبة الفيديوهات
 
-    </h2>
+</h2>
 
-    <div
-    id="videosContainer">
-
-    </div>
+<div
+id="videosContainer">
 
 </div>
 
-<!--==================================
-        مشغل الفيديو
-===================================-->
+</div>
+
+<!--=========================
+      Video Player
+==========================-->
 
 <div
 id="playerCard"
 class="result-card hidden">
 
-    <h2
-    id="videoTitle"
-    class="result-title">
+<h2
+id="videoTitle"
+class="result-title">
 
-    </h2>
+عنوان الدرس
 
-    <div class="video-wrapper">
+</h2>
 
-        <iframe
+<div class="video-wrapper">
 
-        id="videoFrame"
-
-        src=""
-
-        allowfullscreen
-
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-
-        referrerpolicy="strict-origin-when-cross-origin">
-
-        </iframe>
-
-    </div>
-
-    <div class="player-buttons">
-
-        <button
-        id="prevBtn">
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-            السابق
-
-        </button>
-
-        <button
-        id="nextBtn">
-
-            التالى
-
-            <i class="fa-solid fa-arrow-left"></i>
-
-        </button>
-
-    </div>
-
-    <button
-    id="backBtn"
-    class="back-btn">
-
-        <i class="fa-solid fa-list"></i>
-
-        الرجوع لقائمة الدروس
-
-    </button>
+<iframe
+id="videoFrame"
+width="100%"
+height="420"
+src=""
+frameborder="0"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+referrerpolicy="no-referrer-when-downgrade"
+allowfullscreen>
+</iframe>
 
 </div>
-<!--==================================
-        رسالة الخطأ
-===================================-->
 
-<div
-id="errorCard"
-class="result-card hidden">
+<div class="attendance-btn-box">
+
+<button
+id="prevBtn"
+class="attendance-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+الدرس السابق
+
+</button>
+
+</div>
+
+<div class="attendance-btn-box">
+
+<button
+id="nextBtn"
+class="attendance-btn">
+
+الدرس التالى
+
+<i class="fa-solid fa-arrow-left"></i>
+
+</button>
+
+</div>
+
+<div class="attendance-btn-box">
+
+<button
+id="backBtn"
+class="back-btn">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+العودة إلى الفيديوهات
+
+</button>
+
+</div>
+
+</div>
+
+<!--====================================
+        رسالة خطأ تسجيل الدخول
+=====================================-->
+
+<div id="loginError" class="result-card hidden">
 
     <div class="not-found">
 
@@ -245,7 +272,7 @@ class="result-card hidden">
 
         <h2>
 
-            لا توجد بيانات أو حدث خطأ
+            كود الطالب أو رقم الواتساب غير صحيح
 
         </h2>
 
@@ -253,19 +280,17 @@ class="result-card hidden">
 
 </div>
 
-
-<!--==================================
-        Footer
-===================================-->
+<!--====================================
+            Footer
+=====================================-->
 
 <footer class="footer">
 
     <h3>
 
-        أكاديمية السمان
+        أكاديمية مستر السمان
 
     </h3>
-
 
     <p>
 
@@ -273,41 +298,35 @@ class="result-card hidden">
 
     </p>
 
-
     <a
 
-    href="https://www.facebook.com/profile.php?id=100093795507056"
+        href="https://www.facebook.com/profile.php?id=100093795507056"
 
-    target="_blank"
+        target="_blank"
 
-    class="facebook-btn">
+        class="facebook-btn">
 
         <i class="fa-brands fa-facebook-f"></i>
 
-        صفحة الأكاديمية
+        صفحة الأكاديمية على فيسبوك
 
     </a>
 
-
     <p class="copyright">
 
-        © جميع الحقوق محفوظة
+        © جميع الحقوق محفوظة 2026
 
     </p>
 
-
 </footer>
-
 
 </div>
 
-
-<!--==================================
-        JavaScript
-===================================-->
+<!--====================================
+            JavaScript
+=====================================-->
 
 <script src="script.js"></script>
-
 
 </body>
 
