@@ -247,7 +247,7 @@ function displayVideos() {
 }
 
 //=========================================
-// تشغيل الفيديو
+// تشغيل الفيديو (بدون حماية ومع تفعيل الأزرار والتحكم)
 //=========================================
 
 function playVideo(index) {
@@ -276,13 +276,13 @@ function playVideo(index) {
 
     const wrapper = document.querySelector(".video-wrapper");
     
+    // إزالة طبقة الحماية الشفافة والسماح بالتحكم الكامل عبر يوتيوب (disablekb=0 لتفعيل الكيبورد، وتفعيل أزرار التحكم)
     wrapper.innerHTML = `
-        <div class="video-protection-overlay" oncontextmenu="return false;"></div>
         <iframe
         id="videoFrame"
         width="100%"
         height="420"
-        src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&disablekb=1&modestbranding=1&rel=0&enablejsapi=1"
+        src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&disablekb=0&modestbranding=1&rel=0&enablejsapi=1"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
         allowfullscreen
@@ -294,11 +294,6 @@ function playVideo(index) {
     playerCard.classList.remove("hidden");
     updateButtons();
 }
-
-// منع كليك يمين
-document.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-});
 
 //=========================================
 // التنقل والتحكم بالأزرار
@@ -357,10 +352,4 @@ function logout() {
 window.addEventListener("beforeunload", function () {
     const frame = document.getElementById("videoFrame");
     if (frame) frame.src = "";
-});
-
-document.addEventListener("contextmenu", function (e) {
-    if (e.target.closest(".video-wrapper")) {
-        e.preventDefault();
-    }
 });
