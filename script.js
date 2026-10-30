@@ -1,366 +1,379 @@
 ﻿//=========================================
-// شريط التحميل بالنسبة المئوية عند الدخول
-//=========================================
-(function initLoader() {
-    let progress = 0;
-    const progressBar = document.getElementById("progressBar");
-    const progressText = document.getElementById("progressText");
-    const loaderOverlay = document.getElementById("loaderOverlay");
-
-    // محاكاة زيادة التحميل حتى 90% أثناء تحميل الصفحة
-    const interval = setInterval(() => {
-        if (progress < 90) {
-            progress += Math.floor(Math.random() * 8) + 2;
-            if (progress > 90) progress = 90;
-            if (progressBar && progressText) {
-                progressBar.style.width = progress + "%";
-                progressText.textContent = progress + "%";
-            }
-        }
-    }, 100);
-
-    // عند اكتمال تحميل جميع عناصر الصفحة والمحتوى
-    window.addEventListener("load", function () {
-        clearInterval(interval);
-        progress = 100;
-        if (progressBar && progressText) {
-            progressBar.style.width = "100%";
-            progressText.textContent = "100%";
-        }
-        
-        // إخفاء الشاشة بسلاسة بعد اكتمال التحميل
-        setTimeout(() => {
-            if (loaderOverlay) {
-                loaderOverlay.classList.add("fade-out");
-            }
-        }, 400);
-    });
-})();
-
-//=========================================
-// Google Apps Script API
+// Google Sheets APIs
 //=========================================
 
-const API =
-"https://script.google.com/macros/s/AKfycbwkKaqlC0Y7x4eqIXHirUIXvk3093E8gZqqp9xxXH2eqZ2HEYPUF6nBmmGBhSHxmSs/exec";
-
-//=========================================
-// Variables
-//=========================================
+const API_URL = "https://script.google.com/macros/s/AKfycbz4eWiLKJMZjiEvJ3HlWawVHbyLuAtp4BhDTzLN7gqRT3jlpWFBvle_UoiSzMPDgmYfzw/exec";
+const ATTENDANCE_API = "https://script.google.com/macros/s/AKfycbzd0as48EDKd4k9y2IMggJzTc9QGhMuUysa0X4R1Q6plhtGtFlnfMBbXnyZamZfFPN1/exec";
+const HOMEWORK_API = "https://script.google.com/macros/s/AKfycbyGgMFmNMPR6OAWNBemEoTF_jFs1u2AXaWJXFOeA6iVuOlgeJau1DuAutH89h9oP_hC-g/exec";
+const EXAM_API = "https://script.google.com/macros/s/AKfycbyrSNWCMtLaFZepp3OlxuLip2Pe02X2bndnkbqJE_2DszwwPPKsSnP1wsSlv7pqjvi8fA/exec";
+const PAYMENT_API = "https://script.google.com/macros/s/AKfycbwBxrvavrzIp_9tKKIk63OUYLhk30WkT_zU3JWFk7Km11Dmh8gB_ycqgoND_4Z-JwdX/exec";
+const NOTICE_API = "https://script.google.com/macros/s/AKfycbwl6OSRp_KCjrIuEjGDtg3FsXarWwZ6xvVFto_tzzUFl6lX7sWVXdK0OLhg7oKenWw-/exec";
 
 let currentStudent = null;
-let videos = [];
-let currentIndex = 0;
 
-//=========================================
-// Elements
-//=========================================
+let cacheData = {
+    attendance: null,
+    homework: null,
+    exam: null,
+    payment: null,
+    notice: null
+};
 
+// العناصر الأساسية
 const codeInput = document.getElementById("codeInput");
 const passwordInput = document.getElementById("passwordInput");
-const loginBtn = document.getElementById("loginBtn");
-const loginError = document.getElementById("loginError");
-
-const studentCard = document.getElementById("studentCard");
-const videosCard = document.getElementById("videosCard");
-const playerCard = document.getElementById("playerCard");
-const videosContainer = document.getElementById("videosContainer");
-
-const studentName = document.getElementById("studentName");
-const studentGrade = document.getElementById("studentGrade");
-const videoTitle = document.getElementById("videoTitle");
-const videoFrame = document.getElementById("videoFrame");
-
+const searchBtn = document.getElementById("searchBtn");
+const result = document.getElementById("result");
+const notFound = document.getElementById("notFound");
+const rememberMeInput = document.getElementById("rememberMe");
 const logoutBtn = document.getElementById("logoutBtn");
+
+// أزرار الكروت
+const attendanceBtn = document.getElementById("attendanceBtn");
+const homeworkBtn = document.getElementById("homeworkBtn");
+const examBtn = document.getElementById("examBtn");
+const paymentBtn = document.getElementById("paymentBtn");
+const noticeBtn = document.getElementById("noticeBtn");
+
+// الكروت
+const attendanceCard = document.getElementById("attendanceCard");
+const homeworkCard = document.getElementById("homeworkCard");
+const examCard = document.getElementById("examCard");
+const paymentCard = document.getElementById("paymentCard");
+const noticeCard = document.getElementById("noticeCard");
+
+// محتوى الكروت
+const attendanceContent = document.getElementById("attendanceContent");
+const homeworkContent = document.getElementById("homeworkContent");
+const examContent = document.getElementById("examContent");
+const paymentContent = document.getElementById("paymentContent");
+const noticeContent = document.getElementById("noticeContent");
+
+// أزرار العودة
 const backBtn = document.getElementById("backBtn");
-const nextBtn = document.getElementById("nextBtn");
-const prevBtn = document.getElementById("prevBtn");
+const backHomeworkBtn = document.getElementById("backHomeworkBtn");
+const backExamBtn = document.getElementById("backExamBtn");
+const backPaymentBtn = document.getElementById("backPaymentBtn");
+const backNoticeBtn = document.getElementById("backNoticeBtn") || document.getElementById("backNoticeCard");
 
-//=========================================
-// Auto-Login Check on Load
-//=========================================
+// التحقق من وجود تسجيل دخول مخزن مسبقاً
+window.addEventListener("DOMContentLoaded", () => {
+    const savedCode = localStorage.getItem("studentCode");
+    const savedPhone = localStorage.getItem("studentPhone");
 
-document.addEventListener("DOMContentLoaded", function () {
-    const savedCode = localStorage.getItem("savedStudentCode");
-    const savedPhone = localStorage.getItem("savedStudentPhone");
-
-    if (savedCode && savedPhone) {
+    if (savedCode && savedPhone && codeInput && passwordInput) {
         codeInput.value = savedCode;
         passwordInput.value = savedPhone;
-        login(true); // تسجيل دخول تلقائي
+        searchStudent();
     }
 });
 
-//=========================================
-// Events
-//=========================================
+// الأحداث (Event Listeners)
+if (searchBtn) searchBtn.addEventListener("click", searchStudent);
+if (codeInput) codeInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
+if (passwordInput) passwordInput.addEventListener("keypress", function(e){ if(e.key === "Enter"){ searchStudent(); } });
 
-loginBtn.addEventListener("click", () => login(false));
-logoutBtn.addEventListener("click", logout);
-backBtn.addEventListener("click", backToVideos);
-nextBtn.addEventListener("click", nextLesson);
-prevBtn.addEventListener("click", previousLesson);
+if (attendanceBtn) attendanceBtn.addEventListener("click", showAttendance);
+if (homeworkBtn) homeworkBtn.addEventListener("click", showHomework);
+if (examBtn) examBtn.addEventListener("click", showExam);
+if (paymentBtn) paymentBtn.addEventListener("click", showPayments);
+if (noticeBtn) noticeBtn.addEventListener("click", showNotices);
 
-codeInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        login(false);
+function goBackToResult() {
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
+    if(result) result.classList.remove("hidden");
+}
+
+if(backBtn) backBtn.addEventListener("click", goBackToResult);
+if(backHomeworkBtn) backHomeworkBtn.addEventListener("click", goBackToResult);
+if(backExamBtn) backExamBtn.addEventListener("click", goBackToResult);
+if(backPaymentBtn) backPaymentBtn.addEventListener("click", goBackToResult);
+if(backNoticeBtn) backNoticeBtn.addEventListener("click", goBackToResult);
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("studentCode");
+        localStorage.removeItem("studentPhone");
+        cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
+        if(codeInput) codeInput.value = "";
+        if(passwordInput) passwordInput.value = "";
+        if(result) result.classList.add("hidden");
+        currentStudent = null;
+        alert("تم تسجيل الخروج بنجاح");
+    });
+}
+
+function displayStudent(student){
+    currentStudent = student;
+
+    if(result) result.classList.remove("hidden");
+    if(notFound) notFound.classList.add("hidden");
+
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
+
+    if(attendanceBtn) attendanceBtn.classList.remove("hidden");
+    if(homeworkBtn) homeworkBtn.classList.remove("hidden");
+    if(examBtn) examBtn.classList.remove("hidden");
+    if(paymentBtn) paymentBtn.classList.remove("hidden");
+    if(noticeBtn) noticeBtn.classList.remove("hidden");
+
+    if(document.getElementById("studentCode")) document.getElementById("studentCode").textContent = student.code || "0";
+    if(document.getElementById("studentName")) document.getElementById("studentName").textContent = student.name || "0";
+    if(document.getElementById("studentGrade")) document.getElementById("studentGrade").textContent = student.grade || "0";
+    if(document.getElementById("studentGroup")) document.getElementById("studentGroup").textContent = student.group || "0";
+    if(document.getElementById("studentWhatsapp")) document.getElementById("studentWhatsapp").textContent = student.studentWhatsapp || "0";
+    if(document.getElementById("parentWhatsapp")) document.getElementById("parentWhatsapp").textContent = student.parentWhatsapp || "0";
+
+    preloadAllData(student.code);
+}
+
+// دالة الاستعلام عن الطالب
+async function searchStudent() {
+    function normalize(str) {
+        if (!str) return "";
+        return String(str)
+            .replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 1632)
+            .replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 1776)
+            .replace(/\D/g, "");
     }
-});
 
-passwordInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        login(false);
-    }
-});
+    const rawCode = codeInput ? codeInput.value.trim() : "";
+    const rawPhone = passwordInput ? passwordInput.value.trim() : "";
 
-//=========================================
-// تسجيل الدخول (نظام التحقق الصارم بالواتساب)
-//=========================================
-
-async function login(isAutoLogin = false) {
-    const code = codeInput.value.trim();
-    const phoneInput = passwordInput.value.trim();
+    const code = normalize(rawCode);
+    const phoneInput = normalize(rawPhone);
 
     if (code === "" || phoneInput === "") {
-        if (!isAutoLogin) {
-            alert("برجاء إدخال كود الطالب ورقم الواتساب");
-        }
+        alert("برجاء إدخال كود الطالب ورقم الواتساب");
         return;
     }
 
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارى تسجيل الدخول...';
+    if (result) result.classList.add("hidden");
+    if (notFound) notFound.classList.add("hidden");
 
-    loginError.classList.add("hidden");
+    if (searchBtn) {
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = "جاري التحقق...";
+    }
 
     try {
-        const response = await fetch(
-            API +
-            "?code=" + encodeURIComponent(code) +
-            "&phone=" + encodeURIComponent(phoneInput)
-        );
+        const response = await fetch(`${API_URL}?code=${encodeURIComponent(code)}&phone=${encodeURIComponent(phoneInput)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-        const data = await response.json();
+        const student = await response.json();
 
-        // إذا فشل تسجيل الدخول أو جاء خطأ من السيرفر
-        if (!data.success) {
-            loginBtn.disabled = false;
-            loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> دخول المنصة';
+        if (searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
+        }
 
-            const errorMsgHeading = loginError.querySelector("h2");
-            if (errorMsgHeading && data.message) {
-                errorMsgHeading.textContent = data.message;
-            }
-
-            loginError.classList.remove("hidden");
-            
-            // في حال فشل تسجيل الدخول التلقائي نمرر مسح للبيانات المحفوظة القديمة
-            if (isAutoLogin) {
-                localStorage.removeItem("savedStudentCode");
-                localStorage.removeItem("savedStudentPhone");
+        if (!student || student.error || !student.code) {
+            if (notFound) {
+                notFound.innerHTML = `<i class="fa-solid fa-circle-xmark"></i><br><br><strong>كود الطالب أو رقم الواتساب غير صحيح</strong>`;
+                notFound.classList.remove("hidden");
             }
             return;
         }
 
-        // نجاح تسجيل الدخول -> حفظ البيانات محلياً
-        localStorage.setItem("savedStudentCode", code);
-        localStorage.setItem("savedStudentPhone", phoneInput);
-
-        currentStudent = data;
-        studentName.textContent = data.name;
-        studentGrade.textContent = data.grade;
-        videos = data.videos || [];
-
-        codeInput.value = "";
-        passwordInput.value = "";
-
-        if (videos.length === 0) {
-            videosContainer.innerHTML = "<h2 style='text-align:center'>لا توجد فيديوهات لهذا الصف</h2>";
+        if (rememberMeInput && rememberMeInput.checked) {
+            localStorage.setItem("studentCode", rawCode);
+            localStorage.setItem("studentPhone", rawPhone);
         } else {
-            displayVideos();
+            localStorage.removeItem("studentCode");
+            localStorage.removeItem("studentPhone");
         }
 
-        studentCard.classList.remove("hidden");
-        videosCard.classList.remove("hidden");
-        playerCard.classList.add("hidden");
+        displayStudent(student);
 
     } catch (error) {
-        console.error(error);
-        if (!isAutoLogin) {
-            alert("حدث خطأ أثناء الاتصال بالخادم");
+        console.error("Error searching student:", error);
+        if (searchBtn) {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = "استعلام";
         }
+        alert("حدث خطأ في الاتصال، برجاء المحاولة مرة أخرى.");
     }
-
-    loginBtn.disabled = false;
-    loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> دخول المنصة';
 }
 
-//=========================================
-// عرض الفيديوهات مرتبة تصاعدياً
-//=========================================
-
-function displayVideos() {
-    videos.sort(function(a, b) {
-        return Number(a.order) - Number(b.order);
-    });
-
-    let html = "";
-    const unitsMap = {};
+// تحميل البيانات بذكاء (إعطاء الأولوية القصوى للحضور لتحميله فوراً دون أي تأخير)
+async function preloadAllData(code) {
+    cacheData = { attendance: null, homework: null, exam: null, payment: null, notice: null };
     
-    videos.forEach(function(video) {
-        if (!unitsMap[video.unit]) {
-            unitsMap[video.unit] = [];
-        }
-        unitsMap[video.unit].push(video);
-    });
+    // 1. جلب بيانات الحضور فوراً ووضعها في الذاكرة المؤقتة
+    try {
+        const attResponse = await fetch(`${ATTENDANCE_API}?code=${encodeURIComponent(code)}`);
+        cacheData.attendance = await attResponse.json();
+    } catch (e) {
+        cacheData.attendance = [];
+    }
 
-    for (const unitName in unitsMap) {
-        html += `
-        <div class="video-unit">
-            <div class="video-unit-title">
-                📚 ${unitName}
+    // 2. تأجيل باقي الأقسام في الخلفية لمنع التكدس على السيرفر
+    setTimeout(async () => {
+        const fetchSafe = (url) => fetch(`${url}?code=${encodeURIComponent(code)}`).then(res => res.json()).catch(() => []);
+
+        cacheData.homework = await fetchSafe(HOMEWORK_API);
+        cacheData.exam = await fetchSafe(EXAM_API);
+        cacheData.payment = await fetchSafe(PAYMENT_API);
+        cacheData.notice = await fetchSafe(NOTICE_API);
+    }, 600);
+}
+
+function getLoadingHTML() {
+    return `
+        <div style="text-align:center; padding: 30px 20px;">
+            <p style="font-size: 20px; font-weight: bold; color: #0d47a1; margin-bottom: 15px;">جاري التحميل...</p>
+            <div style="width: 100%; background: #e0e0e0; border-radius: 15px; overflow: hidden; height: 22px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);">
+                <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(135deg, #0d47a1, #1976d2); border-radius: 15px; transition: width 0.4s ease-in-out;"></div>
             </div>
+            <p id="progressText" style="font-size: 16px; font-weight: bold; color: #555; margin-top: 10px;">0%</p>
         </div>
-        `;
-
-        unitsMap[unitName].forEach(function(video) {
-            const originalIndex = videos.findIndex(v => v === video);
-
-            html += `
-            <div class="video-card" onclick="playVideo(${originalIndex})">
-                <div class="video-header">
-                    <div>
-                        <div class="lesson-number">${video.lesson}</div>
-                        <div class="lesson-name">${video.title}</div>
-                    </div>
-                    <div class="video-icon">
-                        <i class="fa-solid fa-circle-play"></i>
-                    </div>
-                </div>
-                <button class="watch-btn">▶ مشاهدة الفيديو</button>
-            </div>
-            `;
-        });
-    }
-
-    videosContainer.innerHTML = html;
-}
-
-//=========================================
-// تشغيل الفيديو
-//=========================================
-
-function playVideo(index) {
-    currentIndex = index;
-    const video = videos[index];
-
-    document.querySelectorAll(".video-card").forEach(function(card) {
-        card.classList.remove("active");
-    });
-    const cards = document.querySelectorAll(".video-card");
-    if (cards[index]) {
-        cards[index].classList.add("active");
-    }
-
-    videoTitle.textContent = video.title;
-
-    let videoId = "";
-    let rawUrl = video.video;
-    if (rawUrl.includes("embed/")) {
-        videoId = rawUrl.split("embed/")[1].split("?")[0];
-    } else if (rawUrl.includes("youtu.be/")) {
-        videoId = rawUrl.split("youtu.be/")[1].split("?")[0];
-    } else if (rawUrl.includes("v=")) {
-        videoId = rawUrl.split("v=")[1].split("&")[0];
-    }
-
-    const wrapper = document.querySelector(".video-wrapper");
-    
-    wrapper.innerHTML = `
-        <div class="video-protection-overlay" oncontextmenu="return false;"></div>
-        <iframe
-        id="videoFrame"
-        width="100%"
-        height="420"
-        src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&disablekb=1&modestbranding=1&rel=0&enablejsapi=1"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-        allowfullscreen
-        referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
     `;
-
-    videosCard.classList.add("hidden");
-    playerCard.classList.remove("hidden");
-    updateButtons();
 }
 
-// منع كليك يمين
-document.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-});
+async function renderFast(apiUrl, cardElement, contentElement, mappingFn, cacheKey) {
+    if(result) result.classList.add("hidden");
+    if(attendanceCard) attendanceCard.classList.add("hidden");
+    if(homeworkCard) homeworkCard.classList.add("hidden");
+    if(examCard) examCard.classList.add("hidden");
+    if(paymentCard) paymentCard.classList.add("hidden");
+    if(noticeCard) noticeCard.classList.add("hidden");
 
-//=========================================
-// التنقل والتحكم بالأزرار
-//=========================================
+    cardElement.classList.remove("hidden");
 
-function updateButtons() {
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex === videos.length - 1;
-}
-
-function nextLesson() {
-    if (currentIndex < videos.length - 1) {
-        playVideo(currentIndex + 1);
+    if (cacheData[cacheKey] !== null) {
+        processRender(cacheData[cacheKey], contentElement, mappingFn);
+        return;
     }
-}
 
-function previousLesson() {
-    if (currentIndex > 0) {
-        playVideo(currentIndex - 1);
-    }
-}
-
-function backToVideos() {
-    playerCard.classList.add("hidden");
-    videosCard.classList.remove("hidden");
-    const frame = document.getElementById("videoFrame");
-    if (frame) frame.src = "";
-}
-
-//=========================================
-// تسجيل الخروج
-//=========================================
-
-function logout() {
-    // مسح البيانات المحفوظة محلياً عند الخروج
-    localStorage.removeItem("savedStudentCode");
-    localStorage.removeItem("savedStudentPhone");
-
-    currentStudent = null;
-    videos = [];
-    currentIndex = 0;
-    studentCard.classList.add("hidden");
-    videosCard.classList.add("hidden");
-    playerCard.classList.add("hidden");
-    loginError.classList.add("hidden");
+    contentElement.innerHTML = getLoadingHTML();
     
-    const frame = document.getElementById("videoFrame");
-    if (frame) frame.src = "";
+    let progress = 10;
+    const bar = document.getElementById("progressBar");
+    const text = document.getElementById("progressText");
+    
+    const interval = setInterval(() => {
+        if (progress < 85) {
+            progress += Math.floor(Math.random() * 15) + 5;
+            if(bar) bar.style.width = progress + "%";
+            if(text) text.textContent = progress + "%";
+        }
+    }, 150);
 
-    videosContainer.innerHTML = "";
-    codeInput.value = "";
-    passwordInput.value = "";
-    codeInput.focus();
+    try {
+        const response = await fetch(`${apiUrl}?code=${encodeURIComponent(currentStudent.code)}`);
+        const data = await response.json();
+        cacheData[cacheKey] = data;
+        
+        clearInterval(interval);
+        if(bar) bar.style.width = "100%";
+        if(text) text.textContent = "100%";
+        
+        setTimeout(() => {
+            processRender(data, contentElement, mappingFn);
+        }, 300);
+
+    } catch (e) {
+        clearInterval(interval);
+        contentElement.innerHTML = "<h3 style='text-align:center;'>حدث خطأ أثناء تحميل البيانات</h3>";
+    }
 }
 
-window.addEventListener("beforeunload", function () {
-    const frame = document.getElementById("videoFrame");
-    if (frame) frame.src = "";
-});
-
-document.addEventListener("contextmenu", function (e) {
-    if (e.target.closest(".video-wrapper")) {
-        e.preventDefault();
+function processRender(data, contentElement, mappingFn) {
+    if (!data || data.length === 0) {
+        contentElement.innerHTML = "<h3 style='text-align:center;'>لا توجد بيانات متاحة</h3>";
+        return;
     }
-});
+    let html = "";
+    if (window.innerWidth <= 768) {
+        data.forEach(item => { html += mappingFn(item, true); });
+    } else {
+        html = mappingFn(data, false);
+    }
+    contentElement.innerHTML = html;
+}
+
+// عرض الحضور
+function showAttendance() {
+    renderFast(ATTENDANCE_API, attendanceCard, attendanceContent, (item, isMobile) => {
+        if (isMobile) {
+            return `<div class="attendance-mobile-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>✅ الحالة</span><strong>${item.status || '0'}</strong></div></div>`;
+        }
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>الحالة</th></tr>`;
+        item.forEach(row => {
+            table += `<tr><td>${row.lesson || '0'}</td><td>${row.date || '0'}</td><td>${row.status || '0'}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'attendance');
+}
+
+// عرض الواجبات
+function showHomework() {
+    renderFast(HOMEWORK_API, homeworkCard, homeworkContent, (item, isMobile) => {
+        if (isMobile) {
+            return `<div class="attendance-mobile-card homework-card"><div class="card-item"><span>📚 رقم الواجب</span><strong>${item.homework || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '0'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '0'}</strong></div></div>`;
+        }
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>رقم الواجب</th><th>التاريخ</th><th>درجة الطالب</th><th>الدرجة النهائية</th></tr>`;
+        item.forEach(row => {
+            table += `<tr><td>${row.homework || '0'}</td><td>${row.date || '0'}</td><td>${row.grade || '0'}</td><td>${row.total || '0'}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'homework');
+}
+
+// عرض الامتحانات
+function showExam() {
+    renderFast(EXAM_API, examCard, examContent, (item, isMobile) => {
+        if (isMobile) {
+            return `<div class="attendance-mobile-card exam-card"><div class="card-item"><span>📝 رقم الامتحان</span><strong>${item.exam || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div class="card-item"><span>🎯 درجة الطالب</span><strong>${item.grade || '0'}</strong></div><div class="card-item"><span>🏆 الدرجة النهائية</span><strong>${item.total || '0'}</strong></div></div>`;
+        }
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الامتحان</th><th>التاريخ</th><th>درجة الطالب</th><th>الدرجة النهائية</th></tr>`;
+        item.forEach(row => {
+            table += `<tr><td>${row.exam || '0'}</td><td>${row.date || '0'}</td><td>${row.grade || '0'}</td><td>${row.total || '0'}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'exam');
+}
+
+// عرض المدفوعات
+function showPayments() {
+    renderFast(PAYMENT_API, paymentCard, paymentContent, (item, isMobile) => {
+        if (isMobile) {
+            return `<div class="attendance-mobile-card payment-card"><div class="card-item"><span>📅 الشهر</span><strong>${item.month || '0'}</strong></div><div class="card-item"><span>💵 المدفوع</span><strong>${item.paid || '0'}</strong></div><div class="card-item"><span>❗ المتبقى</span><strong>${item.remaining || '0'}</strong></div><div class="card-item"><span>💰 إجمالى المستحق</span><strong>${item.total || '0'}</strong></div></div>`;
+        }
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الشهر</th><th>المدفوع</th><th>المتبقى</th><th>إجمالى المستحق</th></tr>`;
+        item.forEach(row => {
+            table += `<tr><td>${row.month || '0'}</td><td>${row.paid || '0'}</td><td>${row.remaining || '0'}</td><td>${row.total || '0'}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'payment');
+}
+
+// عرض الملاحظات والتنبيهات
+function showNotices() {
+    renderFast(NOTICE_API, noticeCard, noticeContent, (item, isMobile) => {
+        if (isMobile) {
+            const imgUrl = item.image || item.imageUrl || item.photo || "";
+            const imgHtmlMobile = imgUrl ? `<div class="notice-img-container"><a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="صورة التنبيه" class="notice-img" style="max-width:100%; height:auto; border-radius:10px; margin-top:10px;"></a></div>` : "";
+            return `<div class="attendance-mobile-card notice-card"><div class="card-item"><span>📘 الحصة</span><strong>${item.lesson || '0'}</strong></div><div class="card-item"><span>📅 التاريخ</span><strong>${item.date || '0'}</strong></div><div style="margin-top:15px;line-height:2"><span style="color:#d32f2f;font-weight:bold">🔔 التنبيه</span><br>${item.notice || '0'}</div>${imgHtmlMobile}</div>`;
+        }
+
+        let table = `<div class="table-wrapper"><table class="attendance-table"><tr><th>الحصة</th><th>التاريخ</th><th>التنبيه أو الملاحظة</th><th>الصورة المرفقة</th></tr>`;
+        item.forEach(row => {
+            const rowImgUrl = row.image || row.imageUrl || row.photo || "";
+            const imgHtmlDesktop = rowImgUrl ? `<a href="${rowImgUrl}" target="_blank"><img src="${rowImgUrl}" alt="صورة" style="width:150px; max-height:120px; border-radius:8px; object-fit:cover; box-shadow:0 3px 10px rgba(0,0,0,0.15);"></a>` : "0";
+            table += `<tr><td>${row.lesson || '0'}</td><td>${row.date || '0'}</td><td>${row.notice || '0'}</td><td>${imgHtmlDesktop}</td></tr>`;
+        });
+        return table + `</table></div>`;
+    }, 'notice');
+}
